@@ -6,14 +6,19 @@ import struct
 import numpy as np
 import pyaudio
 
+# from matplotlib import pyplot
+
 
 # 振幅A 基本周波数f0 サンプリング周波数fs 長さ[秒]length
-# の正弦波を作成して返す
-def createSineWave(A, f0, fs, length):
+# 正弦波を合成する
+def createCombinedWave(A, freqList, fs, length):
     data = []
+    amp = float(A) / len(freqList)
     # [-1.0, 1.0]の小数値が入った波を作成
-    for n in np.arange(length * fs):
-        s = A * np.sin(2 * np.pi * f0 * n / fs)
+    for n in np.arange(length * fs):  # nはサンプルインデックス
+        s = 0.0
+        for f in freqList:
+            s += amp * np.sin(2 * np.pi * f * n / fs)
         # 振幅が大きいときはクリッピング
         if s > 1.0:
             s = 1.0
@@ -50,9 +55,18 @@ def play(data, fs, bit):
 
 
 if __name__ == "__main__":
+    # 和音
+    chordList = [
+        (262, 330, 392),  # C（ドミソ）
+        (294, 370, 440),  # D（レファ#ラ）
+        (330, 415, 494),  # E（ミソ#シ）
+        (349, 440, 523),  # F（ファラド）
+        (392, 494, 587),  # G（ソシレ）
+        (440, 554, 659),  # A（ラド#ミ）
+        (494, 622, 740)  # B（シレ#ファ#）
+    ]
 
-    freqList = [262, 294, 330, 349, 392, 440, 494, 523]  # ドレミファソラシド
-    for f in freqList:
-        print("周波数: ", f, "Hz")
-        data = createSineWave(1.0, f, 8000.0, 1.0)
+    for freqList in chordList:
+        print("周波数: ", freqList, "Hz")
+        data = createCombinedWave(1.0, freqList, 8000.0, 1.0)
         play(data, 8000, 16)

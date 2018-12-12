@@ -67,14 +67,8 @@ if __name__ == "__main__":
 
         for i, key in enumerate(keyList):
             if (kb == key):
-                f = keyList[i]
+                f = freqList[i]
 
         print("周波数: ", f, "Hz")
         data = createSineWave(1.0, f, 8000.0, 1.0)
         play(data, 8000, 16)
-    """
-    for f in freqList:
-        print("周波数: ", f, "Hz")
-        data = createSineWave(1.0, f, 8000.0, 1.0)
-        play(data, 8000, 16)
-    """
