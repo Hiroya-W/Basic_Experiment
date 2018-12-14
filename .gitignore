@@ -1,0 +1,5 @@
+# venv36フォルダを無視
+venv36/
+
+#.vscodeフォルダを無視
+.vscode/
