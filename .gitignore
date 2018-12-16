@@ -1,5 +1,4 @@
-# venv36フォルダを無視
+# 無視するフォルダ
 venv36/
-
-#.vscodeフォルダを無視
 .vscode/
+nlabo/data/haarcascades
