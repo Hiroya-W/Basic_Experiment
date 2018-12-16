@@ -23,8 +23,9 @@ def createSineWave(A, f0, fs, length):
         data.append(s)
     # [-32768, 32767]の整数値に変換
     data = [int(x * 32767.0) for x in data]
-    pyplot.plot(data[0:100])
-    pyplot.show()
+    # print(len(data))
+    # pyplot.plot(data[0:100])
+    # pyplot.show()
 
     # バイナリに変換
     data = struct.pack("h" * len(data), *data)  # listに*をつけると引数展開される
