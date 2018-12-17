@@ -5,9 +5,9 @@ import cv2
 import sys
 from matplotlib import pyplot
 import struct
-import numpy as np
-from scipy.interpolate import interp1d
-import math
+# import numpy as np
+# from scipy.interpolate import interp1d
+# import math
 import pyaudio
 
 
