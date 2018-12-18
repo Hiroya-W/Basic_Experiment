@@ -5,7 +5,8 @@
 import struct
 import numpy as np
 import pyaudio
-from matplotlib import pyplot
+
+# from matplotlib import pyplot
 
 
 # 振幅A 基本周波数f0 サンプリング周波数fs 長さ[秒]length
