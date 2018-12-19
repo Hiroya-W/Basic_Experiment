@@ -13,7 +13,7 @@ import pyaudio
 
 def main():
     # グレースケールでカラー画像を読み込む
-    img = cv2.imread("./nlabo/data/TRIMEDIMGS/IMG_TRIM_2.png",
+    img = cv2.imread("./nlabo/data/TRIMEDIMGS/IMG_TRIM_3.png",
                      cv2.IMREAD_UNCHANGED)
 
     cv2.imshow("IMG", img)
@@ -86,7 +86,7 @@ def main():
     print("Play")
     p = pyaudio.PyAudio()
     stream = p.open(
-        format=pyaudio.paInt16, channels=1, rate=int(128000), output=True)
+        format=pyaudio.paInt16, channels=1, rate=int(96000), output=True)
 
     # チャンク単位でストリームに出力し音声を再生
     chunk = 1024

@@ -50,27 +50,31 @@ def SCENE_SELECT():
 # コマンド実行
 def SCENE_COMMAND():
     global PHASE
+    # セレクト
+    if PHASE == Phase.SELECT:
+        # コマンド選択画面
+        SCENE_SELECT()
     # カメラを起動
-    if PHASE == Phase.TAKE_A_IMAGE_OF_WAVE:
-        cv_camera.message()
-        print("MESSAGE")
+    elif PHASE == Phase.TAKE_A_IMAGE_OF_WAVE:
+        print("カメラを起動します")
+        cv_camera.Enable_Camera()
+
+        # 波形が保存されたら フェーズを切替
+        if cv_camera.SAVED_FLAG:
+            PHASE = Phase.IMPORT_WAVE
+    # 波形を読み込む
+    elif PHASE == Phase.IMPORT_WAVE:
+        print("波形を読み込みます")
+
     # 終了
-    elif PHASE.name == Phase.EXIT:
+    elif PHASE == Phase.EXIT:
         print("終了します")
         sys.exit()
 
 
 if __name__ == "__main__":
     while True:
-        # コマンド選択画面
-        SCENE_SELECT()
         # コマンド実行
-        # SCENE_COMMAND()
-        # カメラを起動
-        if PHASE == Phase.TAKE_A_IMAGE_OF_WAVE:
-            cv_camera.Enable_Camera()
-        # 終了
-        elif PHASE == Phase.EXIT:
-            print("終了します")
-            # sys.exit()
-            break
+        SCENE_COMMAND()
+        # セレクト画面へ戻る
+        PHASE = Phase.SELECT

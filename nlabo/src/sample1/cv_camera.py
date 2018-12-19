@@ -9,10 +9,6 @@ cam = None
 img_tri = None
 
 
-def message():
-    print("HELLO")
-
-
 def Enable_Camera():
     # グローバル変数とする
     global SAVED_FLAG
@@ -20,13 +16,15 @@ def Enable_Camera():
     global img_tri
 
     # カメラのキャプチャを開始
-    cam = cv2.VideoCapture(0)
+    cam = cv2.VideoCapture(1)
 
     while True:
         # 画像を取得
         ret, img = cam.read()
         # ウィンドウに画像を表示
         cv2.imshow("SAVE S KEY - EXIT Q KEY", img)
+        # ウィンドウ作成
+        cv2.namedWindow("SAVED IMG", cv2.WINDOW_AUTOSIZE)
         # キー入力用
         key = cv2.waitKey(1)
 
