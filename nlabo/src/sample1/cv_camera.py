@@ -70,7 +70,7 @@ def Enable_Camera():
                 # トリミング
                 img_tri = th3[y:y + h, x:x + w]
                 # 表示
-                cv2.imshow("SAVED IMG", img_tri)
+                cv2.imshow("SAVE & EXIT ENTER KEY - EXIT Q KEY", img_tri)
 
         # Enterキーが押されたカメラを閉じる 13=Enter Key
         elif key == 13:

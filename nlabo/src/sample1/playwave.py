@@ -8,6 +8,7 @@ import struct
 import pyaudio
 import os
 import re
+import copy
 
 
 # キーボードから入力を受け付け
@@ -96,36 +97,53 @@ def PlayWave():
     print("Finish Wave Detect")
     # 検出した波形を表示する
     pyplot.plot(data)
-    pyplot.show()
+    pyplot.pause(1)
 
     # データを一時的に保管
-    temp = data
-    # 取得した波形を複製して連結
-    for i in range(10):
-        data.extend(temp)
-    print("Created Wave")
+    temp = copy.deepcopy(data)
+    # 再生時間
+    length = 1.0
+    freqList = [262, 294, 330, 349, 392, 440, 494, 523]  # ドレミファソラシド
+    for f in freqList:
+        # 配列の中身を削除
+        del data
+        # 配列の中身を復元
+        data = copy.deepcopy(temp)
+        # サンプリング周波数を決定
+        fs = width * f
+        # 指定時間の長さ分の幅
+        # points = fs * length
+        copy_count = f * length
+        # 取得した波形を複製して連結
+        for i in range(int(copy_count)):
+            data.extend(temp)
+            # print(len(data))
+        print("Created Wave")
 
-    # [-32768, 32767]の整数値に変換
-    data = [int(x * 32767.0) for x in data]
-    # pyplot.plot(data)
-    # pyplot.show()
-    # バイナリに変換
-    data = struct.pack("h" * len(data), *data)  # listに*をつけると引数展開される
+        # [-32768, 32767]の整数値に変換
+        data = [int(x * 32767.0) for x in data]
+        # pyplot.plot(data)
+        # pyplot.show()
+        # バイナリに変換
+        data = struct.pack("h" * len(data), *data)  # listに*をつけると引数展開される
 
-    # ストリームを開く
-    print("Play")
-    p = pyaudio.PyAudio()
-    stream = p.open(
-        format=pyaudio.paInt16, channels=1, rate=int(96000), output=True)
+        # ストリームを開く
+        print("Play")
+        p = pyaudio.PyAudio()
+        stream = p.open(
+            format=pyaudio.paInt16, channels=1, rate=int(fs), output=True)
 
-    # チャンク単位でストリームに出力し音声を再生
-    chunk = 1024
-    sp = 0  # 再生位置ポインタ
-    buffer = data[sp:sp + chunk]
-    while buffer != b"":
-        stream.write(buffer)
-        sp = sp + chunk
+        # チャンク単位でストリームに出力し音声を再生
+        chunk = 1024
+        sp = 0  # 再生位置ポインタ
         buffer = data[sp:sp + chunk]
-        # print(buffer)
-    stream.close()
-    p.terminate()
+        while buffer != b"":
+            stream.write(buffer)
+            sp = sp + chunk
+            buffer = data[sp:sp + chunk]
+            # print(buffer)
+        stream.close()
+        p.terminate()
+
+    cv2.destroyAllWindows()
+    pyplot.close()
