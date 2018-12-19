@@ -5,6 +5,7 @@ import readchar
 from enum import Enum, auto
 # 自作モジュール
 import cv_camera
+import playwave
 
 
 class Phase(Enum):
@@ -45,17 +46,15 @@ def SCENE_SELECT():
     elif kb == b"q":
         PHASE = Phase.EXIT
     print("PHASE " + PHASE.name + " に移行します")
+    # コマンド実行
+    SCENE_COMMAND()
 
 
 # コマンド実行
 def SCENE_COMMAND():
     global PHASE
-    # セレクト
-    if PHASE == Phase.SELECT:
-        # コマンド選択画面
-        SCENE_SELECT()
     # カメラを起動
-    elif PHASE == Phase.TAKE_A_IMAGE_OF_WAVE:
+    if PHASE == Phase.TAKE_A_IMAGE_OF_WAVE:
         print("カメラを起動します")
         cv_camera.Enable_Camera()
 
@@ -65,7 +64,7 @@ def SCENE_COMMAND():
     # 波形を読み込む
     elif PHASE == Phase.IMPORT_WAVE:
         print("波形を読み込みます")
-
+        playwave.PlayWave()
     # 終了
     elif PHASE == Phase.EXIT:
         print("終了します")
@@ -74,7 +73,7 @@ def SCENE_COMMAND():
 
 if __name__ == "__main__":
     while True:
-        # コマンド実行
-        SCENE_COMMAND()
+        # コマンド選択画面
+        SCENE_SELECT()
         # セレクト画面へ戻る
         PHASE = Phase.SELECT

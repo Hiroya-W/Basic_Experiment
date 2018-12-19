@@ -16,15 +16,16 @@ def Enable_Camera():
     global img_tri
 
     # カメラのキャプチャを開始
-    cam = cv2.VideoCapture(1)
+    cam = cv2.VideoCapture(0)
 
     while True:
         # 画像を取得
         ret, img = cam.read()
         # ウィンドウに画像を表示
-        cv2.imshow("SAVE S KEY - EXIT Q KEY", img)
+        cv2.imshow("SAVE S KEY", img)
         # ウィンドウ作成
-        cv2.namedWindow("SAVED IMG", cv2.WINDOW_AUTOSIZE)
+        cv2.namedWindow("SAVE & EXIT ENTER KEY - EXIT Q KEY",
+                        cv2.WINDOW_AUTOSIZE)
         # キー入力用
         key = cv2.waitKey(1)
 
@@ -73,8 +74,13 @@ def Enable_Camera():
 
         # Enterキーが押されたカメラを閉じる 13=Enter Key
         elif key == 13:
+            # 写真を撮ってエンターキーが押されたとき
             if img_saved is not None:
                 SAVED_FLAG = True
+            else:
+                # 後処理
+                func_exit()
+                break
             # 保存先の指定
             file_index = 0
             file_Path = "./nlabo/data/TRIMEDIMGS/IMG_TRIM_" + str(
@@ -93,30 +99,14 @@ def Enable_Camera():
             # 保存
             cv2.imwrite(file_Path, img_tri)
             print(file_Path + "に保存しました")
-            # カメラをリリース
-            cam.release()
-            # カメラウィンドウを破棄
-            cv2.destroyWindow("SAVE S KEY - EXIT Q KEY")
-            print("CAMERA RELEASE")
+            # 終了する
+            # 後処理
+            func_exit()
             break
 
         # Qキーが押されたら終了する
         elif key & 0xFF == ord("q"):
             # 後処理
-            func_exit()
-            break
-
-    # カメラを終了させるとき
-    if SAVED_FLAG:
-        show_savedimg()
-
-
-# カメラを終了して
-def show_savedimg():
-    while True:
-        key = cv2.waitKey(1)
-        # Qキーが押されたら終了する
-        if key & 0xFF == ord("q"):
             func_exit()
             break
 
