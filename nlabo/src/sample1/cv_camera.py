@@ -16,7 +16,7 @@ def Enable_Camera():
     global img_tri
 
     # カメラのキャプチャを開始
-    cam = cv2.VideoCapture(1)
+    cam = cv2.VideoCapture(0)
 
     while True:
         # 画像を取得
