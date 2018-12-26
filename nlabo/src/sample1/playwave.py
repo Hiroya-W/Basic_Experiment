@@ -4,6 +4,7 @@
 import cv2
 import sys
 from matplotlib import pyplot
+import numpy as np
 import struct
 import pyaudio
 import os
@@ -95,15 +96,24 @@ def PlayWave():
                 break
 
     print("Finish Wave Detect")
+
+    # fft
+
     # 検出した波形を表示する
+    # 2行1列のグラフの1番目の位置にプロット
+    pyplot.subplot(211)
+    pyplot.xlabel("time [sample]")
+    pyplot.ylabel("amplitude")
     pyplot.plot(data)
     pyplot.pause(1)
+    # pyplot.show()
 
     # データを一時的に保管
     temp = copy.deepcopy(data)
     # 再生時間
     length = 1.0
     freqList = [262, 294, 330, 349, 392, 440, 494, 523]  # ドレミファソラシド
+    FFT_FLAG = False
     for f in freqList:
         # 配列の中身を削除
         del data
@@ -119,6 +129,29 @@ def PlayWave():
             data.extend(temp)
             # print(len(data))
         print("Created Wave")
+
+        # このデータを使ってFFTする
+        # 1回だけ
+        # ドの音を用いてFFT
+        if FFT_FLAG is False:
+            FFT_FLAG = True
+            start = 0  # サンプリングする開始位置
+            N = 2048  # FFTのサンプル数
+            hammingWindow = np.hamming(N)  # ハミング窓
+            # 切り出した波形データに窓関数をかける
+            windowedData = hammingWindow * data[start:start + N]
+            windowedDFT = np.fft.fft(windowedData)
+            fftfreqList = np.fft.fftfreq(N, d=1.0 / fs)
+            windowedAmp = [np.sqrt(c.real**2 + c.imag**2) for c in windowedDFT]
+            print("windowedAmp len: " + str(len(windowedAmp)))
+            # 2行1列のグラフの2番目の位置にプロット
+            pyplot.subplot(212)
+            pyplot.plot(fftfreqList, windowedAmp, marker='o', linestyle='-')
+            pyplot.axis([0, 5000, 0, 200])
+            pyplot.xlabel("frequency [Hz]")
+            pyplot.ylabel("amplitude spectrum")
+            pyplot.pause(1)
+            # pyplot.show()
 
         # [-32768, 32767]の整数値に変換
         data = [int(x * 32767.0) for x in data]
