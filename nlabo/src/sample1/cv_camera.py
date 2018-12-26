@@ -17,7 +17,7 @@ def Enable_Camera():
 
     # カメラのキャプチャを開始
     cam = cv2.VideoCapture(0)
-
+    img_saved = None
     while True:
         # 画像を取得
         ret, img = cam.read()
