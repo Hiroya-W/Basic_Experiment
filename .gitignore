@@ -1,4 +1,10 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+
 # 無視するフォルダ
 venv36/
 .vscode/
-nlabo/data/haarcascades
+haarcascades/
