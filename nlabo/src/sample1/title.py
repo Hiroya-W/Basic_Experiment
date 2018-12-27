@@ -15,7 +15,8 @@ from pygame.locals import K_q
 
 # 自作モジュール
 import cv_camera
-import playwave
+# import playwave
+import window_playwave
 
 
 # フェーズをENUMで管理
@@ -49,16 +50,17 @@ def SCENE_COMMAND():
     global PHASE
     # カメラを起動
     if PHASE == Phase.TAKE_A_IMAGE_OF_WAVE:
+        pygame.quit()
         print("カメラを起動します")
         cv_camera.Enable_Camera()
-
         # 波形が保存されたら フェーズを切替
         if cv_camera.SAVED_FLAG:
             PHASE = Phase.IMPORT_WAVE
     # 波形を読み込む
     elif PHASE == Phase.IMPORT_WAVE:
+        pygame.quit()
         print("波形を読み込みます")
-        playwave.PlayWave()
+        window_playwave.PlayWave()
     # 終了
     elif PHASE == Phase.EXIT:
         print("終了します")
@@ -100,7 +102,7 @@ def SCENE_SELECT():
     title1 = titlefont.render(t1str, True, (255, 255, 255))
     title2 = titlefont.render(t2str, True, (255, 255, 255))
     list_fmt = [
-        font.render(">" + liststr[0], True, (255, 255, 255)),
+        font.render(">" + liststr[0], True, (116, 169, 214)),
         font.render(" " + liststr[1], True, (255, 255, 255)),
         font.render(" " + liststr[2], True, (255, 255, 255))
     ]
@@ -126,7 +128,7 @@ def SCENE_SELECT():
         def set_list_format(NEXT_NUM):
             for i, s in enumerate(liststr):
                 if i == NEXT_NUM - 1:
-                    list_fmt[i] = font.render(">" + s, True, (255, 255, 255))
+                    list_fmt[i] = font.render(">" + s, True, (116, 169, 214))
                 else:
                     list_fmt[i] = font.render(" " + s, True, (255, 255, 255))
 
