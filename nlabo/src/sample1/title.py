@@ -82,7 +82,7 @@ def SCENE_SELECT():
     # ウィンドウサイズの指定
     screen = pygame.display.set_mode(SCREEN_SIZE)
     # ウィンドウの名前の指定
-    pygame.display.set_caption("Title Window")
+    pygame.display.set_caption("描いた波形の音をならしてみよう")
 
     # フォントの作成
     # Noneでfreesansbold.ttfになる

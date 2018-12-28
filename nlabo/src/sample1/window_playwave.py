@@ -56,7 +56,7 @@ def PlayWave():
     # ウィンドウサイズの指定
     screen = pygame.display.set_mode(SCREEN_SIZE)
     # ウィンドウの名前の指定
-    pygame.display.set_caption("Play Window")
+    pygame.display.set_caption("読み込む波形を選ぶ")
     # フォントの作成
     font = pygame.font.Font("./nlabo/lib/fonts/NuKinakoMochiFwCt-Reg.otf", 35)
     filefont = pygame.font.Font("./nlabo/lib/fonts/NuKinakoMochiFwCt-Reg.otf",
