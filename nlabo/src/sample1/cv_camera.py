@@ -35,14 +35,15 @@ def Enable_Camera():
             # コピーを作成
             img_saved = img
             # ノイズ除去
-            img_blur = cv2.medianBlur(img, 7)
+            img_blur = cv2.medianBlur(img, 3)
+            cv2.imshow("BLUR", img_blur)
             # グレー変換
             img_gray = cv2.cvtColor(img_blur, cv2.COLOR_BGR2GRAY)
             # 2値化
             th3 = cv2.adaptiveThreshold(img_gray, 255,
                                         cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                        cv2.THRESH_BINARY, 11, 2)
-
+                                        cv2.THRESH_BINARY, 11, 9)
+            cv2.imshow("BINARY", th3)
             # 輪郭を抽出
             ret, contours, hierarchy = cv2.findContours(
                 th3, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
@@ -68,6 +69,12 @@ def Enable_Camera():
                 cv2.rectangle(img_saved, (x, y), (x + w, y + h), (0, 255, 0),
                               2)
                 # トリミング
+                # 少し内側をトリミングする
+                offset = 0.06
+                x += int(w * offset)
+                y += int(h * offset)
+                w -= 2 * int(w * offset)
+                h -= 2 * int(h * offset)
                 img_tri = th3[y:y + h, x:x + w]
                 # 表示
                 cv2.imshow("SAVE & EXIT ENTER KEY - EXIT Q KEY", img_tri)

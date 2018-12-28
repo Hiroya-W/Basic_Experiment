@@ -23,7 +23,6 @@ from pygame.locals import K_q
 from pygame.locals import K_s, K_d, K_f, K_g, K_h, K_j, K_k, K_l
 
 
-
 # ディレクトリに存在するファイル数を数える
 def FilesDetector():
     dir = "./nlabo/data/TRIMEDIMGS/"
@@ -48,7 +47,6 @@ def PlayWave():
 
     for i in range(count):
         images.append(pygame.image.load(dir + "IMG_TRIM_" + str(i) + ".png"))
-
 
     # 画面サイズ
     SCREEN_SIZE = (1280, 1000)
@@ -194,7 +192,6 @@ def PlayWave():
 
             # print(str(CURSOR))
 
-
     if FINISH is False:
         # 読み込むファイルの番号を指定
         img_index = CURSOR
@@ -297,7 +294,8 @@ def PlayWave():
             print("windowedAmp len: " + str(len(windowedAmp)))
             # 2行1列のグラフの2番目の位置にプロット
             pyplot.subplot(212)
-            pyplot.plot(fftfreqList, windowedAmp, marker='o', linestyle='-')
+            # pyplot.plot(fftfreqList, windowedAmp, marker='o', linestyle='-')
+            pyplot.plot(fftfreqList, windowedAmp, linestyle='-')
             pyplot.axis([0, 5000, 0, 200])
             pyplot.xlabel("frequency [Hz]")
             pyplot.ylabel("amplitude spectrum")
@@ -400,4 +398,3 @@ def PlayWave():
 
         cv2.destroyAllWindows()
         pyplot.close()
-
