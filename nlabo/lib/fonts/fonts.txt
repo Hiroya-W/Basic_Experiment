@@ -1,0 +1,7 @@
+フォントの利用について
+本アプリでは「Nu きなこもち」フォントを利用しています
+きなこ全角 + もち組込濁点フォントをダウンロードし、
+「NuKinakoMochiFwCt-Reg.otf」をフォルダに入れてください
+
+
+http://kokagem.sakura.ne.jp/font/mochi/
