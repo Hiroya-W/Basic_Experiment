@@ -20,6 +20,8 @@ from pygame.locals import K_DOWN
 from pygame.locals import K_LEFT
 from pygame.locals import K_RIGHT
 from pygame.locals import K_q
+from pygame.locals import K_s, K_d, K_f, K_g, K_h, K_j, K_k, K_l
+
 
 
 # ディレクトリに存在するファイル数を数える
@@ -43,8 +45,10 @@ def PlayWave():
     # 画像を読み込む
     images = []
     dir = "./nlabo/data/TRIMEDIMGS/"
-    for file in files:
-        images.append(pygame.image.load(dir + file))
+
+    for i in range(count):
+        images.append(pygame.image.load(dir + "IMG_TRIM_" + str(i) + ".png"))
+
 
     # 画面サイズ
     SCREEN_SIZE = (1280, 1000)
@@ -65,6 +69,9 @@ def PlayWave():
 
     # 決定フラグ
     DETERMINED = False
+
+    FINISH = False
+
     # ページ切り替え用
     PAGE = 0
     START = PAGE * 12
@@ -119,6 +126,9 @@ def PlayWave():
                                           event.type == KEYDOWN
                                           and event.key == K_q):
                 pygame.quit()
+
+                FINISH = True
+
                 DETERMINED = True
             # カーソル移動
             if event.type == KEYDOWN and event.key == K_UP:
@@ -184,81 +194,87 @@ def PlayWave():
 
             # print(str(CURSOR))
 
-    # 読み込むファイルの番号を指定
-    img_index = CURSOR
-    img = cv2.imread(
-        "./nlabo/data/TRIMEDIMGS/IMG_TRIM_" + str(img_index) + ".png",
-        cv2.IMREAD_UNCHANGED)
 
-    # 画像ファイルの読み込みに失敗したらエラー終了
-    if img is None:
-        print("Failed to load image file.")
-        sys.exit(1)
-    else:
-        print("Success load image file.")
+    if FINISH is False:
+        # 読み込むファイルの番号を指定
+        img_index = CURSOR
+        img = cv2.imread(
+            "./nlabo/data/TRIMEDIMGS/IMG_TRIM_" + str(img_index) + ".png",
+            cv2.IMREAD_UNCHANGED)
 
-    cv2.imshow("IMG", img)
-    # カラーとグレースケールで場合分け
-    if len(img.shape) == 3:
-        height, width, channels = img.shape[:3]
-    else:
-        height, width = img.shape[:2]
-        channels = 1
+        # 画像ファイルの読み込みに失敗したらエラー終了
+        if img is None:
+            print("Failed to load image file.")
+            sys.exit(1)
+        else:
+            print("Success load image file.")
 
-    # 取得結果（幅，高さ，チャンネル数，depth）を表示
-    print("width: " + str(width))
-    print("height: " + str(height))
-    print("channels: " + str(channels))
-    print("dtype: " + str(img.dtype))
+        cv2.imshow("IMG", img)
+        # カラーとグレースケールで場合分け
+        if len(img.shape) == 3:
+            height, width, channels = img.shape[:3]
+        else:
+            height, width = img.shape[:2]
+            channels = 1
 
-    # 波形検出
-    # 各1列で一番最初に見つけた黒を取り出す
-    data = []
-    for i in range(width - 1):
-        for j in range(height - 1):
-            # print(i, j)
-            if (img.item(j, i) == 0):
-                value = j
-                value -= height / 2
-                value *= -1
-                value /= height
+        # 取得結果（幅，高さ，チャンネル数，depth）を表示
+        print("width: " + str(width))
+        print("height: " + str(height))
+        print("channels: " + str(channels))
+        print("dtype: " + str(img.dtype))
 
-                if value > 1.0:
-                    value = 1.0
-                if value < -1.0:
-                    value = -1.0
-                data.append(value)
-                break
+        # 波形検出
+        # 各1列で一番最初に見つけた黒を取り出す
+        data = []
+        for i in range(width - 1):
+            for j in range(height - 1):
+                # print(i, j)
+                if (img.item(j, i) == 0):
+                    value = j
+                    value -= height / 2
+                    value *= -1
+                    value /= height
 
-    print("Finish Wave Detect")
+                    if value > 1.0:
+                        value = 1.0
+                    if value < -1.0:
+                        value = -1.0
+                    data.append(value)
+                    break
 
-    # fft
+        print("Finish Wave Detect")
 
-    # 検出した波形を表示する
-    # 2行1列のグラフの1番目の位置にプロット
-    pyplot.subplot(211)
-    pyplot.xlabel("time [sample]")
-    pyplot.ylabel("amplitude")
-    pyplot.plot(data)
-    pyplot.pause(1)
-    # pyplot.show()
+        # fft
 
-    # データを一時的に保管
-    temp = copy.deepcopy(data)
-    # 再生時間
-    length = 1.0
-    freqList = [262, 294, 330, 349, 392, 440, 494, 523]  # ドレミファソラシド
-    FFT_FLAG = False
-    for f in freqList:
+        # 検出した波形を表示する
+        # 2行1列のグラフの1番目の位置にプロット
+        pyplot.subplot(211)
+        pyplot.xlabel("time [sample]")
+        pyplot.ylabel("amplitude")
+        pyplot.plot(data)
+        # pyplot.pause(1)
+        # pyplot.show(block=False)
+
+        # データを一時的に保管
+        temp = copy.deepcopy(data)
+        # 再生時間
+        length = 1.0
+        freqList = [262, 294, 330, 349, 392, 440, 494, 523]  # ドレミファソラシド
+        keyList = [K_s, K_d, K_f, K_g, K_h, K_j, K_k, K_l]  # SDFGHJKL
+
+        FFT_FLAG = False
+
         # 配列の中身を削除
         del data
         # 配列の中身を復元
         data = copy.deepcopy(temp)
         # サンプリング周波数を決定
-        fs = width * f
+
+        fs = width * freqList[0]
         # 指定時間の長さ分の幅
         # points = fs * length
-        copy_count = f * length
+        copy_count = freqList[0] * length
+
         # 取得した波形を複製して連結
         for i in range(int(copy_count)):
             data.extend(temp)
@@ -286,32 +302,102 @@ def PlayWave():
             pyplot.xlabel("frequency [Hz]")
             pyplot.ylabel("amplitude spectrum")
             pyplot.pause(1)
-            # pyplot.show()
 
-        # [-32768, 32767]の整数値に変換
-        data = [int(x * 32767.0) for x in data]
-        # pyplot.plot(data)
-        # pyplot.show()
-        # バイナリに変換
-        data = struct.pack("h" * len(data), *data)  # listに*をつけると引数展開される
+            # pyplot.show(block=False)
 
-        # ストリームを開く
-        print("Play")
-        p = pyaudio.PyAudio()
-        stream = p.open(
-            format=pyaudio.paInt16, channels=1, rate=int(fs), output=True)
+        # 画面サイズ
+        SCREEN_SIZE = (525, 210)
 
-        # チャンク単位でストリームに出力し音声を再生
-        chunk = 1024
-        sp = 0  # 再生位置ポインタ
-        buffer = data[sp:sp + chunk]
-        while buffer != b"":
-            stream.write(buffer)
-            sp = sp + chunk
-            buffer = data[sp:sp + chunk]
-            # print(buffer)
-        stream.close()
-        p.terminate()
+        # Pygameの初期化
+        pygame.init()
+        # ウィンドウサイズの指定
+        screen = pygame.display.set_mode(SCREEN_SIZE)
+        # ウィンドウの名前の指定
+        pygame.display.set_caption("KEY BOARD")
 
-    cv2.destroyAllWindows()
-    pyplot.close()
+        while FINISH is False:
+            f = 0  # 再生しない
+            # 押されているキーをチェック
+            pressed_keys = pygame.key.get_pressed()
+            # キーに対して割り当てられた音を再生
+            for i, key in enumerate(keyList):
+                # KeyListに登録されたキーがあったら
+                if pressed_keys[key]:
+                    # その音に割り当てられた音を鳴らす
+                    f = freqList[i]
+                    # 白鍵盤を青くする
+                    pygame.draw.rect(screen, (116, 169, 214),
+                                     pygame.Rect((5 + 60) * i + 5, 5, 60, 200))
+                else:
+                    pygame.draw.rect(screen, (255, 255, 255),
+                                     pygame.Rect((5 + 60) * i + 5, 5, 60, 200))
+
+            # 黒鍵盤
+            for i in range(8):
+                if i == 2 or i == 6:
+                    continue
+                pygame.draw.rect(screen, (0, 0, 0),
+                                 pygame.Rect((5 + 60) * i + 35, 5, 60, 100))
+            # 画面更新
+            pygame.display.update()
+
+            if f is not 0:
+                # 配列の中身を削除
+                del data
+                # 配列の中身を復元
+                data = copy.deepcopy(temp)
+                # サンプリング周波数を決定
+                fs = width * f
+                # 指定時間の長さ分の幅
+                # points = fs * length
+                copy_count = f * length
+                # 取得した波形を複製して連結
+                for i in range(int(copy_count)):
+                    data.extend(temp)
+                    # print(len(data))
+                print("Created Wave")
+
+                # [-32768, 32767]の整数値に変換
+                data = [int(x * 32767.0) for x in data]
+                # pyplot.plot(data)
+                # pyplot.show()
+                # バイナリに変換
+                data = struct.pack("h" * len(data),
+                                   *data)  # listに*をつけると引数展開される
+
+                # ストリームを開く
+                print("Play")
+                p = pyaudio.PyAudio()
+                stream = p.open(
+                    format=pyaudio.paInt16,
+                    channels=1,
+                    rate=int(fs),
+                    output=True)
+
+                # チャンク単位でストリームに出力し音声を再生
+                chunk = 1024
+                sp = 0  # 再生位置ポインタ
+                buffer = data[sp:sp + chunk]
+                while buffer != b"":
+                    stream.write(buffer)
+                    sp = sp + chunk
+                    buffer = data[sp:sp + chunk]
+                    # print(buffer)
+                stream.close()
+                p.terminate()
+
+            # イベント処理
+            for event in pygame.event.get():
+                # 画面の閉じるボタンを押したとき
+                # ESC,Qキーが押されたとき
+                if event.type == QUIT or (event.type == KEYDOWN
+                                          and event.key == K_ESCAPE) or (
+                                              event.type == KEYDOWN
+                                              and event.key == K_q):
+                    print("Quit")
+                    pygame.quit()
+                    FINISH = True
+
+        cv2.destroyAllWindows()
+        pyplot.close()
+
