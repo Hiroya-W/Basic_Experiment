@@ -55,6 +55,13 @@
 それに波形を描いて波形撮影モードで撮影する。  
 [シートはここ](https://github.com/Hiroya-W/Basic_Experiment/tree/master/nlabo/data/sheets)  
 
+## フォント
+レトロゲームの雰囲気を出すために「[Nu きなこもち](http://kokagem.sakura.ne.jp/font/mochi/)」フォントを利用した。  
+そのため、本アプリを利用する前にフォントをダウンロードしてフォントフォルダに入れる必要がある。  
+サイトより、きなこ全角 + もち組込濁点フォントをダウンロード、「NuKinakoMochiFwCt-Reg.otf」をフォルダに入れる。  
+[入れる場所](https://github.com/Hiroya-W/Basic_Experiment/tree/master/nlabo/lib/fonts)  
+
+
 ## スクリーンショット
 ### タイトル画面
 ![](https://github.com/Hiroya-W/Basic_Experiment/blob/images/SnapCrab_2018-12-28_13-55-6.png)
