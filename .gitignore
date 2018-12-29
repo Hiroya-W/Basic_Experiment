@@ -9,7 +9,10 @@ venv36/
 .vscode/
 haarcascades/
 wav/
+build/
+dist/
 
 # ファイル
 NuKinakoMochiCt-Reg.otf
 NuKinakoMochiFwCt-Reg.otf
+title.spec
