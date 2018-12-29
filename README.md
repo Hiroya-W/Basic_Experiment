@@ -61,6 +61,13 @@
 サイトより、きなこ全角 + もち組込濁点フォントをダウンロード、「NuKinakoMochiFwCt-Reg.otf」をフォルダに入れる。  
 [入れる場所](https://github.com/Hiroya-W/Basic_Experiment/tree/master/nlabo/lib/fonts)  
 
+## 実行ファイル
+Windows用にexeファイルをpyinstallerを用いて、出力したけど動かない。動いたらアップロードする予定。
+
+## Python環境から実行
+requirements.txtを用いて必要なモジュールをインストール  
+Basic_Experiment > nlabo/src/sample1/title.pyで実行  
+**読み込むファイルのディレクトリは実行時のカレントディレクトリ依存なのでこの通りじゃないと動かない**
 
 ## スクリーンショット
 ### タイトル画面
