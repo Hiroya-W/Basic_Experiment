@@ -69,6 +69,8 @@ requirements.txtを用いて必要なモジュールをインストール
 Basic_Experiment > nlabo/src/sample1/title.pyで実行  
 **読み込むファイルのディレクトリは実行時のカレントディレクトリ依存なのでこの通りじゃないと動かない**
 
+Python 3.6.7
+
 ## スクリーンショット
 ### タイトル画面
 ![](https://github.com/Hiroya-W/Basic_Experiment/blob/images/SnapCrab_2018-12-28_13-55-6.png)
