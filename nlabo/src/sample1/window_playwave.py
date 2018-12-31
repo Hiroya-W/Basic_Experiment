@@ -230,7 +230,7 @@ def PlayWave():
                     value = j
                     value -= height / 2
                     value *= -1
-                    value /= height
+                    value /= height / 2
 
                     if value > 1.0:
                         value = 1.0
@@ -245,7 +245,7 @@ def PlayWave():
 
         # 検出した波形を表示する
         # 2行1列のグラフの1番目の位置にプロット
-        pyplot.subplot(211)
+        pyplot.subplot(311)
         pyplot.xlabel("time [sample]")
         pyplot.ylabel("amplitude")
         pyplot.plot(data)
@@ -268,8 +268,10 @@ def PlayWave():
         # サンプリング周波数を決定
 
         fs = width * freqList[0]
+        # fs = width * 5000
         # 指定時間の長さ分の幅
         # points = fs * length
+        # copy_count = 5000 * length
         copy_count = freqList[0] * length
 
         # 取得した波形を複製して連結
@@ -284,16 +286,25 @@ def PlayWave():
         if FFT_FLAG is False:
             FFT_FLAG = True
             start = 0  # サンプリングする開始位置
-            N = 2048  # FFTのサンプル数
+            N = 4096  # FFTのサンプル数
             hammingWindow = np.hamming(N)  # ハミング窓
             # 切り出した波形データに窓関数をかける
             windowedData = hammingWindow * data[start:start + N]
+            # FFT
             windowedDFT = np.fft.fft(windowedData)
+            # IFFT
+            ifft = np.fft.ifft(windowedDFT)
+            pyplot.subplot(313)
+            t = np.arange(0, 0.0001 * 4096, 0.0001)
+            pyplot.plot(t, ifft)
+            pyplot.xlim(0, 0.41)
+            # 周波数リスト
             fftfreqList = np.fft.fftfreq(N, d=1.0 / fs)
+            # 複素数
             windowedAmp = [np.sqrt(c.real**2 + c.imag**2) for c in windowedDFT]
             print("windowedAmp len: " + str(len(windowedAmp)))
             # 2行1列のグラフの2番目の位置にプロット
-            pyplot.subplot(212)
+            pyplot.subplot(312)
             # pyplot.plot(fftfreqList, windowedAmp, marker='o', linestyle='-')
             pyplot.plot(fftfreqList, windowedAmp, linestyle='-')
             pyplot.axis([0, 5000, 0, 200])
@@ -346,6 +357,7 @@ def PlayWave():
                 data = copy.deepcopy(temp)
                 # サンプリング周波数を決定
                 fs = width * f
+                print("fs: " + str(fs))
                 # 指定時間の長さ分の幅
                 # points = fs * length
                 copy_count = f * length
@@ -357,11 +369,13 @@ def PlayWave():
 
                 # [-32768, 32767]の整数値に変換
                 data = [int(x * 32767.0) for x in data]
+                # for value in range(100):
+                #     print(data[value])
                 # pyplot.plot(data)
                 # pyplot.show()
                 # バイナリに変換
-                data = struct.pack("h" * len(data),
-                                   *data)  # listに*をつけると引数展開される
+                # listに*をつけると引数展開される
+                data = struct.pack("h" * len(data), *data)
 
                 # ストリームを開く
                 print("Play")

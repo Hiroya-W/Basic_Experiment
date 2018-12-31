@@ -24,6 +24,8 @@ def createSineWave(A, f0, fs, length):
         data.append(s)
     # [-32768, 32767]の整数値に変換
     data = [int(x * 32767.0) for x in data]
+    for value in range(100):
+        print(data[value])
     # print(len(data))
     # pyplot.plot(data[0:100])
     # pyplot.show()
@@ -55,6 +57,7 @@ def play(data, fs, bit):
 if __name__ == "__main__":
 
     freqList = [262, 294, 330, 349, 392, 440, 494, 523]  # ドレミファソラシド
+    # freqList = [262]
     for f in freqList:
         print("周波数: ", f, "Hz")
         data = createSineWave(1.0, f, 8000.0, 1.0)
