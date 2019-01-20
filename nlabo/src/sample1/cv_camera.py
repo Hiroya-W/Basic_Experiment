@@ -36,7 +36,7 @@ def Enable_Camera():
             img_saved = img
             # ノイズ除去
             img_blur = cv2.medianBlur(img, 3)
-            cv2.imshow("BLUR", img_blur)
+            # cv2.imshow("BLUR", img_blur)
             # グレー変換
             img_gray = cv2.cvtColor(img_blur, cv2.COLOR_BGR2GRAY)
             # 2値化

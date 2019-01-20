@@ -224,6 +224,8 @@ def PlayWave():
         # 各1列で一番最初に見つけた黒を取り出す
         data = []
         for i in range(width - 1):
+            # 黒色を見つけたか
+            FIND = False
             for j in range(height - 1):
                 # print(i, j)
                 if (img.item(j, i) == 0):
@@ -236,8 +238,15 @@ def PlayWave():
                         value = 1.0
                     if value < -1.0:
                         value = -1.0
+                    # データ追加
                     data.append(value)
+                    # 見つけた
+                    FIND = True
                     break
+
+            # 見つけられなかった時は0を追加
+            if FIND is False:
+                data.append(0)
 
         print("Finish Wave Detect")
 
@@ -300,7 +309,6 @@ def PlayWave():
             pyplot.xlabel("frequency [Hz]")
             pyplot.ylabel("amplitude spectrum")
             pyplot.pause(1)
-
             # pyplot.show(block=False)
 
         # 画面サイズ
