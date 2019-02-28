@@ -7,6 +7,7 @@ __pycache__/
 # 無視するフォルダ
 venv36/
 .vscode/
+.venv
 haarcascades/
 wav/
 build/
