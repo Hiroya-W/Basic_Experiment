@@ -39,6 +39,7 @@ CURSOR_TEXT = "> "
 SPACE_TEXT = " "
 
 selected_image_count = 0
+isReload = False
 
 
 def main():
@@ -46,6 +47,9 @@ def main():
     エントリポイント
     """
     while True:
+        while isReload:
+            nlbplayer.startup_player(selected_image)
+
         waveform_selection()
 
         if phase == Phase.EXIT:

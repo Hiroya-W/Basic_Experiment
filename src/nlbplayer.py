@@ -1,7 +1,9 @@
 #!/home/hiroya/Documents/Git-Repos/Lets_Play_Your_Waveform/.venv/bin/python
 # -*- coding: utf-8 -*-
 
+import copy
 import cv2
+from enum import Enum, auto
 import sys
 import struct
 import pyaudio
@@ -14,15 +16,30 @@ from pygame.locals import KEYDOWN
 from pygame.locals import K_ESCAPE
 from pygame.locals import QUIT
 from pygame.locals import K_q
-
+from pygame.locals import K_z, K_x, K_c
 
 import nlbcfg as cfg
+import nlbselection as slc
 
 
-DISPLAY_SIZE = (525, 210)
+class PlayMode(Enum):
+    DEFAULT = auto()
+    EVEN_CONECTION = auto()
+    ODD_CONECTION = auto()
+
+
+SELECTED_IMAGE_COUNT = 0
+
+playmode = PlayMode.DEFAULT
+
+OPTION_TEXTS = [" [Z].たんじゅん　せつぞく", " [X].ぐう　せつぞく", " [C].き　せつぞく"]
+OPTION_LENGTH = len(OPTION_TEXTS)
+CURSOR_TEXT = ">"
+SPACE_TEXT = " "
+
+DISPLAY_SIZE = (525, 410)
 DISPNAY_CAPTION = "KEY BOARD"
 WINDOW_NAME_LOADED_IMAGE = "LOADED IMAGE"
-
 
 # 再生時間
 PLAY_LENGTH = 1.0
@@ -36,8 +53,9 @@ def main():
     """
     エントリポイント
     """
-    SELECTED_IMAGE_COUNT = 1
     startup_player(SELECTED_IMAGE_COUNT)
+    if slc.isReload:
+        main()
 
 
 def startup_player(SELECTED_IMAGE_COUNT):
@@ -176,16 +194,44 @@ def startup_player(SELECTED_IMAGE_COUNT):
 
     def input_event_handling():
         """
-        ウィンドウのxボタン、Q、ESCキーの入力を処理
-        どれも入力があれば終了フラグを立てる
+        鍵盤に対応したキー以外のキー入力イベント
         """
+        global playmode, isReload
         nonlocal isEnd
+        next_playmode = playmode
         for event in pygame.event.get():
             # ウィンドウのxボタン
             isEnd = event.type == QUIT
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE or event.key == K_q:
                     isEnd = True
+                elif event.key == K_z:
+                    next_playmode = PlayMode.DEFAULT
+                elif event.key == K_x:
+                    next_playmode = PlayMode.EVEN_CONECTION
+                elif event.key == K_c:
+                    next_playmode = PlayMode.ODD_CONECTION
+
+            if playmode != next_playmode:
+                playmode = next_playmode
+                isEnd = True
+                slc.isReload = True
+
+    def get_surface_added_cursor(text):
+        """
+        textにカーソルを追加し作成したsurfaceを返す
+            :param text: str
+                追加する対象の文字列
+        """
+        return option_font.render(CURSOR_TEXT + text, True, cfg.COLER_BLUE)
+
+    def get_surface_deleted_cursor(text):
+        """
+        textからカーソルを削除し作成したsurfaceを返す
+            :param text: str
+                削除する対象の文字列
+        """
+        return option_font.render(SPACE_TEXT + text, True, cfg.COLER_WHITE)
 
     def highlight_input_keyboard(index):
         """
@@ -236,6 +282,10 @@ def startup_player(SELECTED_IMAGE_COUNT):
                 ),
             )
 
+        # オプション表示
+        screen.blit(option_text_surfaces[0], (10, 250))
+        screen.blit(option_text_surfaces[1], (10, 300))
+        screen.blit(option_text_surfaces[2], (10, 350))
         # 画面更新
         pygame.display.update()
 
@@ -248,6 +298,9 @@ def startup_player(SELECTED_IMAGE_COUNT):
         waveform_data_for_calculation = []
         SAMPLING_FREQUENCY = LOADED_IMAGE_WIDTH * FREQUENCY
         COPYING_TIMES = FREQUENCY * PLAY_LENGTH
+        if playmode == PlayMode.EVEN_CONECTION or playmode == PlayMode.ODD_CONECTION:
+            COPYING_TIMES /= 2
+
         for i in range(int(COPYING_TIMES)):
             waveform_data_for_calculation.extend(original_waveform_data)
         waveform_data_for_calculation = [
@@ -277,14 +330,31 @@ def startup_player(SELECTED_IMAGE_COUNT):
         p.terminate()
 
     isEnd = False
+    # playmodeの変更に伴い、リロードを行う
+    global isReload
+    slc.isReload = False
     # 2回連続で再生されるのを防ぐ
     previous_key_input_index = -1
     loaded_image = load_image()
     LOADED_IMAGE_HEIGHT, LOADED_IMAGE_WIDTH = loaded_image.shape[:2]
     waveform_data = detect_waveform()
-    # その波形を500HzとしてFFTを計算
-    # sampling_frequency == width なら1Hz
-    SAMPLING_FREQUENCY = LOADED_IMAGE_WIDTH * 500
+
+    if playmode == PlayMode.DEFAULT:
+        # その波形を500HzとしてFFTを計算
+        # sampling_frequency == width なら1Hz
+        SAMPLING_FREQUENCY = LOADED_IMAGE_WIDTH * 500
+    elif playmode == PlayMode.EVEN_CONECTION:
+        copy_waveform_data = copy.deepcopy(waveform_data)
+        copy_waveform_data.reverse()
+        waveform_data.extend(copy_waveform_data)
+        SAMPLING_FREQUENCY = LOADED_IMAGE_WIDTH * 500 / 2
+    elif playmode == PlayMode.ODD_CONECTION:
+        copy_waveform_data = copy.deepcopy(waveform_data)
+        copy_waveform_data.reverse()
+        copy_waveform_data = [x * -1 for x in copy_waveform_data]
+        waveform_data.extend(copy_waveform_data)
+        SAMPLING_FREQUENCY = LOADED_IMAGE_WIDTH * 500 / 2
+
     COPYING_TIMES = SAMPLING_FREQUENCY * PLAY_LENGTH
     waveform_data_for_calculation = []
     for i in range(int(COPYING_TIMES)):
@@ -299,6 +369,24 @@ def startup_player(SELECTED_IMAGE_COUNT):
     pygame.init()
     screen = pygame.display.set_mode(DISPLAY_SIZE)
     pygame.display.set_caption(DISPNAY_CAPTION)
+    option_font = pygame.font.Font(cfg.KINAKO_FONT_PATH, 30)
+    option_text_surfaces = [
+        # カーソルの初期位置にカーソル表示
+        get_surface_added_cursor(OPTION_TEXTS[0]),
+        get_surface_deleted_cursor(OPTION_TEXTS[1]),
+        get_surface_deleted_cursor(OPTION_TEXTS[2]),
+    ]
+    for i in range(OPTION_LENGTH):
+        # fmt: off
+        if i + 1 == playmode.value:
+            option_text_surfaces[i] = get_surface_added_cursor(
+                OPTION_TEXTS[i]
+            )
+        else:
+            option_text_surfaces[i] = get_surface_deleted_cursor(
+                OPTION_TEXTS[i]
+            )
+        # fmt: on
 
     while not isEnd:
         index_input_key = get_index_input_key()

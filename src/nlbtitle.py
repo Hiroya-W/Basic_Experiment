@@ -118,7 +118,7 @@ def scene_title():
         # カーソルが範囲内ならカーソル移動させる
         if 0 <= next_line_count <= OPTION_LENGTH - 1:
             current_line_number = next_line_count
-            for i, surface in enumerate(option_text_surfaces):
+            for i in range(OPTION_LENGTH):
                 # 文字列の変更はsurfaceを変更する
                 # fmt: off
                 if i == current_line_number:
