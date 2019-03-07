@@ -19,7 +19,7 @@ from pygame.locals import K_q
 import nlbcfg as cfg
 
 
-DISPLAY_SIZE = (525, 410)
+DISPLAY_SIZE = (525, 210)
 DISPNAY_CAPTION = "KEY BOARD"
 WINDOW_NAME_LOADED_IMAGE = "LOADED IMAGE"
 
