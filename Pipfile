@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 flake8 = "*"
+black = "*"
 
 [packages]
 numpy = "*"
@@ -15,7 +16,7 @@ pyaudio = "*"
 pygame = "*"
 scipy = "*"
 yapf = "*"
-
+black = "*"
 
 [requires]
 python_version = "3.6"

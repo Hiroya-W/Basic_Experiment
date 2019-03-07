@@ -1,4 +1,4 @@
-#!/home/hiroya/Documents/Git-Repos/Basic_Experiment/.venv/bin/python
+#!/home/hiroya/Documents/Git-Repos/Lets_Play_Your_Waveform/.venv/bin/python
 # -*- coding: utf-8 -*-
 
 import cv2
@@ -19,7 +19,7 @@ from pygame.locals import K_q
 import nlbcfg as cfg
 
 
-DISPLAY_SIZE = (525, 210)
+DISPLAY_SIZE = (525, 410)
 DISPNAY_CAPTION = "KEY BOARD"
 WINDOW_NAME_LOADED_IMAGE = "LOADED IMAGE"
 

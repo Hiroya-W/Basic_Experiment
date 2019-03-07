@@ -1,4 +1,4 @@
-#!/home/hiroya/Documents/Git-Repos/Basic_Experiment/.venv/bin/python
+#!/home/hiroya/Documents/Git-Repos/Lets_Play_Your_Waveform/.venv/bin/python
 # -*- coding: utf-8 -*-
 
 import sys
