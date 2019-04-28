@@ -350,9 +350,19 @@ def startup_player(SELECTED_IMAGE_COUNT):
         SAMPLING_FREQUENCY = LOADED_IMAGE_WIDTH * 500 / 2
     elif playmode == PlayMode.ODD_CONECTION:
         copy_waveform_data = copy.deepcopy(waveform_data)
+        waveform_data.clear()
+        slope = (copy_waveform_data[-1] - copy_waveform_data[0]) / (LOADED_IMAGE_WIDTH - 1)
+        bias = (copy_waveform_data[-1] - copy_waveform_data[0]) / 2
+        for i, x in enumerate(copy_waveform_data):
+            copy_waveform_data[i] = x - (slope * i - bias)
+        copy_waveform_data = [x - copy_waveform_data[0] for x in copy_waveform_data]
+        waveform_data.extend(copy_waveform_data)
         copy_waveform_data.reverse()
         copy_waveform_data = [x * -1 for x in copy_waveform_data]
         waveform_data.extend(copy_waveform_data)
+        max_value = max(waveform_data)
+        min_value = min(waveform_data)
+        waveform_data = [(x - min_value) * 2 / (max_value - min_value) - 1 for x in waveform_data]
         SAMPLING_FREQUENCY = LOADED_IMAGE_WIDTH * 500 / 2
 
     COPYING_TIMES = SAMPLING_FREQUENCY * PLAY_LENGTH
